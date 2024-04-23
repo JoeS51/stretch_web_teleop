@@ -24,6 +24,7 @@ find_package(rosbridge_server REQUIRED)
 install(PROGRAMS
   nodes/configure_video_streams.py
   nodes/navigation_camera.py
+  nodes/detect_gripper.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
