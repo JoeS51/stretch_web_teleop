@@ -3,7 +3,8 @@ import { createRoot } from 'react-dom/client';
 import 'robot/css/index.css';
 import { Robot } from '../../robot/tsx/robot'
 import { WebRTCConnection } from '../../../shared/webrtcconnections'
-import { navigationProps, realsenseProps, gripperProps, WebRTCMessage, ValidJointStateDict, ValidJointStateMessage, IsRunStoppedMessage, RobotPose, ROSOccupancyGrid, OccupancyGridMessage, MapPoseMessage, GoalStatusMessage, MoveBaseState, MoveBaseStateMessage, ROSBatteryState, BatteryVoltageMessage } from 'shared/util'
+import { navigationProps, realsenseProps, gripperProps, WebRTCMessage, ValidJointStateDict, ValidJointStateMessage, IsRunStoppedMessage, RobotPose, ROSOccupancyGrid, OccupancyGridMessage, MapPoseMessage, GoalStatusMessage, MoveBaseState, MoveBaseStateMessage, ROSBatteryState, BatteryVoltageMessage,
+GripperClosedMessage } from 'shared/util'
 import { AllVideoStreamComponent, VideoStream } from './videostreams';
 import ROSLIB from 'roslib';
 import { HasBetaTeleopKitMessage } from '../../../shared/util';
@@ -11,6 +12,7 @@ import { HasBetaTeleopKitMessage } from '../../../shared/util';
 export const robot = new Robot({ 
     jointStateCallback: forwardJointStates,
     batteryStateCallback: forwardBatteryState,
+    gripperClosedStateCallback: forwardGripperClosedState,
     occupancyGridCallback: forwardOccupancyGrid,
     moveBaseResultCallback: forwardMoveBaseState,
     amclPoseCallback: forwardAMCLPose,
@@ -126,6 +128,15 @@ function forwardBatteryState(batteryState: ROSBatteryState) {
         type: 'batteryVoltage',
         message: batteryState.voltage
     } as BatteryVoltageMessage);
+}
+
+function forwardGripperClosedState(closed: boolean) {
+    if (!connection) throw 'WebRTC connection undefined'
+
+    connection.sendData({
+        type: 'gripperClosed',
+        message: closed
+    } as GripperClosedMessage);
 }
 
 function forwardOccupancyGrid(occupancyGrid: ROSOccupancyGrid) {

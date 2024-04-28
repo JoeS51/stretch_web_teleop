@@ -21,6 +21,10 @@ export interface ROSJointState extends Message {
     velocity: [number],
 }
 
+export interface ROSBool extends Message {
+    data: boolean
+}
+
 export interface ROSBatteryState extends Message {
     voltage: number
 }
@@ -45,7 +49,7 @@ export interface Transform {
     transform: ROSLIB.Transform
 }
 
-export type WebRTCMessage = ValidJointStateMessage | OccupancyGridMessage | MapPoseMessage | StopTrajectoryMessage | StopMoveBaseMessage | FollowJointTrajectoryActionResultMessage | MoveBaseActionResultMessage | BatteryVoltageMessage | MoveBaseStateMessage | IsRunStoppedMessage | HasBetaTeleopKitMessage | cmd;
+export type WebRTCMessage = ValidJointStateMessage | OccupancyGridMessage | MapPoseMessage | StopTrajectoryMessage | StopMoveBaseMessage | FollowJointTrajectoryActionResultMessage | MoveBaseActionResultMessage | BatteryVoltageMessage | MoveBaseStateMessage | IsRunStoppedMessage | HasBetaTeleopKitMessage | GripperClosedMessage | cmd;
 
 interface StopTrajectoryMessage {
     type: "stopTrajectory"
@@ -133,6 +137,11 @@ export interface MapPoseMessage {
 export interface BatteryVoltageMessage {
     type: 'batteryVoltage',
     message: number
+}
+
+export interface GripperClosedMessage {
+    type: 'gripperClosed',
+    message: boolean
 }
 
 export interface AMCLPose extends Message {

@@ -120,7 +120,7 @@ function handleWebRTCMessage(message: WebRTCMessage | WebRTCMessage[]) {
         }
         return
     }
-
+    console.log("hey")
     switch (message.type) {
         case 'validJointState':
             remoteRobot.sensors.checkValidJointState(
@@ -159,6 +159,10 @@ function handleWebRTCMessage(message: WebRTCMessage | WebRTCMessage[]) {
             break;
         case 'batteryVoltage':
             remoteRobot.sensors.setBatteryVoltage(message.message)
+            break;
+        case 'gripperClosed':
+            console.log(message.message)
+            console.log("hi")
             break;
         default:
             throw Error(`unhandled WebRTC message type ${message.type}`)

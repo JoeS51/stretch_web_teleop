@@ -1,6 +1,6 @@
 import React from 'react'
 import ROSLIB from "roslib";
-import { ROSJointState, ROSCompressedImage, ValidJoints, VideoProps, ROSOccupancyGrid, ROSPose, MoveBaseState, NavigateToPoseActionResult, NavigateToPoseActionStatusList, ROSBatteryState } from 'shared/util';
+import { ROSJointState, ROSCompressedImage, ValidJoints, VideoProps, ROSOccupancyGrid, ROSPose, MoveBaseState, NavigateToPoseActionResult, NavigateToPoseActionStatusList, ROSBatteryState, ROSBool } from 'shared/util';
 import { rosJointStatetoRobotPose, ValidJointStateDict, RobotPose, IsRunStoppedMessage } from '../../../shared/util';
 
 export var robotMode: "navigation" | "position" = "position"
@@ -28,6 +28,7 @@ export class Robot extends React.Component {
     private linkHeadTiltTF?: ROSLIB.Transform
     private jointStateCallback: (robotPose: RobotPose, jointValues: ValidJointStateDict, effortValues: ValidJointStateDict) => void
     private batteryStateCallback: (batteryState: ROSBatteryState) => void
+    private gripperClosedStateCallback: (gripperClosed: ROSBool) => void
     private occupancyGridCallback: (occupancyGrid: ROSOccupancyGrid) => void
     private moveBaseResultCallback: (goalState: MoveBaseState) => void
     private amclPoseCallback: (pose: ROSLIB.Transform) => void
@@ -40,6 +41,7 @@ export class Robot extends React.Component {
     constructor(props: {
         jointStateCallback: (robotPose: RobotPose, jointValues: ValidJointStateDict, effortValues: ValidJointStateDict) => void,
         batteryStateCallback: (batteryState: ROSBatteryState) => void,
+        gripperClosedStateCallback: (gripperClosed: boolean) => void,
         occupancyGridCallback: (occupancyGrid: ROSOccupancyGrid) => void,
         moveBaseResultCallback: (goalState: MoveBaseState) => void,
         amclPoseCallback: (pose: ROSLIB.Transform) => void,
@@ -49,6 +51,7 @@ export class Robot extends React.Component {
         super(props);
         this.jointStateCallback = props.jointStateCallback
         this.batteryStateCallback = props.batteryStateCallback
+        this.gripperClosedStateCallback = props.gripperClosedStateCallback
         this.occupancyGridCallback = props.occupancyGridCallback
         this.moveBaseResultCallback = props.moveBaseResultCallback
         this.amclPoseCallback = props.amclPoseCallback
@@ -98,6 +101,7 @@ export class Robot extends React.Component {
         this.subscribeToGripperFingerTF()
         this.subscribeToHeadTiltTF()
         this.subscribeToMapTF()
+        this.subscribeToGripperClose()
         
         return Promise.resolve()
     }
@@ -174,6 +178,20 @@ export class Robot extends React.Component {
         });
         topic.subscribe(props.callback)
         this.subscriptions.push(topic)
+    }
+
+    subscribeToGripperClose() {
+        let topic: ROSLIB.Topic<ROSBool> = new ROSLIB.Topic({
+            ros: this.ros,
+            name: '/gripper_closed',
+            messageType: 'std_msgs/Bool'
+        });
+        this.subscriptions.push(topic)
+        
+        topic.subscribe((msg) => {
+            console.log("Gripper close: ", msg.data)
+            if (this.gripperClosedStateCallback) this.gripperClosedStateCallback(msg)
+        });
     }
     
     getHasBetaTeleopKit() {
