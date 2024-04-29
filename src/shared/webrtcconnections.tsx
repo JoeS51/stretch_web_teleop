@@ -7,7 +7,12 @@ const peerConstraints = {
     iceServers: [
         {
             urls: 'stun:stun1.l.google.com:19302'
-        }
+        },
+        {
+            urls: "turn:freeturn.net:5349",
+            username: "free",
+            credential: "free",
+        },
     ],
 };
 
