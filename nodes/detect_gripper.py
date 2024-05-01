@@ -42,14 +42,14 @@ class GripperCloseDetectorNode(Node):
     def check_gripper_state(self):
         print(self.queue[0] - self.queue[-1])
         # checking if the gripper is closed
-        if self.queue[0] - self.queue[-1] > 0 and self.queue[-1] == self.queue[-2]:
+        if self.queue[0] - self.queue[-1] > 0 and self.queue[-1] == self.queue[-2] and self.queue[-1] != self.queue[-3]:
             msg = Bool()
             msg.data = True
             self.publisher.publish(msg)
-        else:
-            msg = Bool()
-            msg.data = False
-            self.publisher.publish(msg)
+        # else:
+        #     msg = Bool()
+        #     msg.data = False
+        #     self.publisher.publish(msg)
 
         
 

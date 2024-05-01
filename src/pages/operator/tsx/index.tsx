@@ -120,7 +120,6 @@ function handleWebRTCMessage(message: WebRTCMessage | WebRTCMessage[]) {
         }
         return
     }
-    console.log("hey")
     switch (message.type) {
         case 'validJointState':
             remoteRobot.sensors.checkValidJointState(
